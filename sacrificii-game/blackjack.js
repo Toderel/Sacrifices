@@ -18,7 +18,7 @@ function showAd() {
     ad.style.fontSize = '1em';
     ad.style.zIndex = '9999';
     ad.style.cursor = 'pointer';
-    ad.innerHTML = `<div style='margin-bottom:12px;text-align:center;'>Gabriela este la 2 KM de tine!<br><b>Plătește 50 de credite</b></div><div style='text-align:center;'><button id='ad-pay-btn' style='background:#c00;color:#fff;border:none;border-radius:8px;padding:8px 14px;cursor:pointer;margin-right:8px;'>Plătește 50 credite</button><button id='ad-close-btn' style='background:#444;color:#fff;border:none;border-radius:8px;padding:8px 14px;cursor:pointer;'>Închide</button></div>`;
+    ad.innerHTML = `<div style='margin-bottom:12px;text-align:center;'>Gabriela este la 2 KM de tine!<br><b>Plătește 50 de credite ca sa te intalnesti cu ea!</b></div><div style='text-align:center;'><button id='ad-pay-btn' style='background:#c00;color:#fff;border:none;border-radius:8px;padding:8px 14px;cursor:pointer;margin-right:8px;'>Plătește 50 credite</button><button id='ad-close-btn' style='background:#444;color:#fff;border:none;border-radius:8px;padding:8px 14px;cursor:pointer;'>Închide</button></div>`;
     document.body.appendChild(ad);
 
     ad.addEventListener('mousemove', function () {
@@ -60,12 +60,9 @@ let bjGameActive = false;
 
 // Ensure initial values exist in localStorage and return parsed numbers
 function resetStateIfNeeded() {
-    // Force start values to 10 as requested (credits and fingers)
+    // Initialize values to 10 only if they are not already set
     if (!localStorage.getItem('credits')) localStorage.setItem('credits', '10');
     if (!localStorage.getItem('fingers')) localStorage.setItem('fingers', '10');
-    // If you want to always force-reset on load uncomment these lines instead:
-    // localStorage.setItem('credits', '10');
-    // localStorage.setItem('fingers', '10');
 }
 
 function bjNewDeck() {
@@ -190,9 +187,9 @@ function bjShowLog(msg) {
 
 // Ensure initial state on load
 window.addEventListener('load', () => {
-    // Start with 10 credits and 10 fingers each time (user requested)
-    localStorage.setItem('credits', localStorage.getItem('credits') || '10');
-    localStorage.setItem('fingers', localStorage.getItem('fingers') || '10');
+    // Initialize to 10 credits and 10 fingers only when not present
+    if (!localStorage.getItem('credits')) localStorage.setItem('credits', '10');
+    if (!localStorage.getItem('fingers')) localStorage.setItem('fingers', '10');
     // Do NOT grant free spins on load
     if (!localStorage.getItem('freeSpins')) localStorage.setItem('freeSpins', '0');
     resetStateIfNeeded();
