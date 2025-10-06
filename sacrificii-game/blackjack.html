@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blackjack</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+        <div id="info-corner" style="position:fixed;top:18px;left:18px;z-index:20;background:#222;color:#0fa;padding:12px 18px;border-radius:12px;box-shadow:0 0 12px #000;font-size:17px;max-width:220px;">
+            <div id="finger-display">Degete: <span id="finger-count">5</span> <span id="finger-emojis">☝️☝️☝️☝️☝️</span></div>
+            <div id="credit-display">Credite: <span id="credit-count">1000</span></div>
+            <div style="margin-top:8px;text-align:center;"><a href="camera-topup.html" style="background:#c33;color:#fff;padding:6px 10px;border-radius:8px;text-decoration:none;">Top-up</a></div>
+        </div>
+    <div id="devil-corner" style="position:fixed;top:18px;right:18px;z-index:10;background:#222;color:#fa0;padding:12px 18px;border-radius:12px;box-shadow:0 0 12px #000;font-size:17px;max-width:260px;">
+        <b>Pariază cu diavolul</b>
+        <a href="camera-diavolului.html" class="devil-btn" style="margin-top:12px;display:inline-block;">Intră în camera diavolului</a>
+    </div>
+    <div id="game-container">
+        <h1>Blackjack</h1>
+        <a href="index.html" style="display:inline-block;margin-bottom:18px;font-size:18px;padding:8px 24px;border-radius:8px;background:#222;color:#0fa;text-decoration:none;">Înapoi la Slots</a>
+    <div id="bj-credits"></div>
+    <div id="bj-fingers" style="margin:12px 0;font-size:32px;text-align:center;"></div>
+        <div id="bj-table" style="margin:20px 0;"></div>
+        <div id="bj-actions" style="display:flex;justify-content:center;gap:20px;">
+            <button onclick="bjDeal()">Împarte</button>
+            <button onclick="bjHit()">Hit</button>
+            <button onclick="bjStand()">Stand</button>
+        </div>
+        <div id="bj-log" style="margin-top:20px;"></div>
+    </div>
+    <script src="blackjack.js"></script>
+    <script>
+        // Sincronizare degete și credite reale între camere
+        function getFingers() {
+            return parseInt(localStorage.getItem('fingers') || '10');
+        }
+        function getCredits() {
+            return parseInt(localStorage.getItem('credits') || '10');
+        }
+        function updateInfoCorner() {
+            const fingers = getFingers();
+            const credits = getCredits();
+            document.getElementById('finger-count').textContent = fingers;
+            document.getElementById('finger-emojis').textContent = '☝️'.repeat(fingers);
+            document.getElementById('credit-count').textContent = credits;
+        }
+        updateInfoCorner();
+        // ...existing code...
+    </script>
+</body>
+</html>

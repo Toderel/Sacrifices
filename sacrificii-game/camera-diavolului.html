@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8">
+  <title>Camera Diavolului</title>
+  <link rel="stylesheet" href="../style.css">
+  <style>
+    .devil-room {
+      max-width: 500px;
+      margin: 40px auto;
+      background: #1a0a1a;
+      color: #ff2222;
+      border-radius: 16px;
+      box-shadow: 0 0 24px #900;
+      padding: 32px;
+      text-align: center;
+      position: relative;
+    }
+  /* Flame / hell styling for modal */
+  .fire-scene { position:relative; width:100%; height:80px; overflow:hidden; margin-bottom:8px }
+  .fire-scene .flame { position:absolute; bottom:-10px; width:24px; height:48px; background: radial-gradient(ellipse at 50% 30%, rgba(255,200,0,0.95) 0%, rgba(255,70,0,0.85) 45%, rgba(120,0,0,0.6) 80%); border-radius:50% 50% 40% 40%; transform-origin:50% 90%; animation: flicker 1s infinite; filter: blur(0.6px); }
+  .fire-scene .flame.f2{ left:12%; animation-duration:1.05s; height:60px; width:30px }
+  .fire-scene .flame.f3{ left:26%; animation-duration:1.2s; height:52px; width:26px }
+  .fire-scene .flame.f4{ left:44%; animation-duration:0.9s; height:70px; width:34px }
+  .fire-scene .flame.f5{ left:62%; animation-duration:1.15s; height:56px; width:28px }
+  .fire-scene .flame.f6{ left:78%; animation-duration:1.05s; height:64px; width:32px }
+  @keyframes flicker { 0%{ transform: translateY(6px) scaleY(0.9) } 50%{ transform: translateY(-6px) scaleY(1.12) } 100%{ transform: translateY(6px) scaleY(0.95) } }
+
+  /* Modal open animation */
+  #topup-modal .modal-card{ transform: translateY(20px) scale(0.96); opacity:0; transition: transform 360ms cubic-bezier(.2,.9,.2,1), opacity 260ms ease-in; }
+  #topup-modal.open .modal-card{ transform: translateY(0) scale(1); opacity:1; }
+  /* Hell glow behind modal */
+  #topup-modal.open::before{ content:''; position:fixed; left:0; top:0; width:100%; height:100%; background: radial-gradient(ellipse at center, rgba(255,80,0,0.06) 0%, rgba(0,0,0,0.6) 50%); z-index:99998 }
+    .devil-avatar {
+      font-size: 64px;
+      margin-bottom: 16px;
+      animation: shake 1.2s infinite;
+    }
+    @keyframes shake {
+      0% { transform: rotate(-2deg); }
+      50% { transform: rotate(2deg); }
+      100% { transform: rotate(-2deg); }
+    }
+    .challenge {
+      font-size: 1.3em;
+      margin: 24px 0;
+      font-style: italic;
+    }
+    .devil-btn {
+      background: #ff2222;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 12px 32px;
+      font-size: 1.1em;
+      cursor: pointer;
+      margin: 8px;
+      transition: background 0.2s;
+    }
+    .devil-btn:hover {
+      background: #900;
+    }
+    .back-link {
+      position: absolute;
+      top: 16px;
+      left: 16px;
+      color: #fff;
+      text-decoration: underline;
+      font-size: 1em;
+    }
+  </style>
+</head>
+<body>
+  <div id="info-corner" style="position:fixed;top:18px;left:18px;z-index:20;background:#222;color:#0fa;padding:12px 18px;border-radius:12px;box-shadow:0 0 12px #000;font-size:17px;max-width:220px;">
+    <div id="finger-display">Degete: <span id="finger-count">5</span> <span id="finger-emojis">☝️☝️☝️☝️☝️</span></div>
+    <div id="credit-display">Credite: <span id="credit-count">1000</span></div>
+  </div>
+  <div class="devil-room">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+      <a class="back-link" href="index.html">⟵ Înapoi la Slots</a>
+      <a class="back-link" href="blackjack.html">⟵ Înapoi la Blackjack</a>
+    </div>
+    <div class="devil-avatar">😈</div>
+    <h2>Camera Diavolului</h2>
+    <div class="challenge" id="devil-challenge"></div>
+    <button class="devil-btn" onclick="acceptChallenge()">Acceptă provocarea</button>
+    <button class="devil-btn" onclick="nextChallenge()">Altă provocare</button>
+    <div id="devil-result" style="margin-top:24px;font-size:1.1em;"></div>
+    <div style="margin-top:32px;display:flex;justify-content:center;gap:24px;">
+      <a href="index.html" class="devil-btn">Slots</a>
+      <a href="blackjack.html" class="devil-btn">Blackjack</a>
+      <a href="adaugare-credite.html" class="devil-btn">Adaugare credite</a>
+      <button id="open-topup" class="devil-btn" onclick="showTopupModal()">Deschide Top-up</button>
+    </div>
+  </div>
+  <script>
+    const challenges = [
+      "Gabriela este la 2 KM de tine! Plateste 50 de credite pentru a te intalni cu ea (smirk face)",
+      "Sacrifică-ți 3 degete pentru 3 rotiri cu 3x noroc ",
+      "Sacrifică-ți un picior pentru a regenera 3 degete jumătate ",
+      "Primești 10 rotiri gratuite dar pentru tot restul vieții tale la un moment din zi 5 secunde vei fi dezbrăcat complet",
+      "Pierde 5 ani din viață pentru o zi cu dublu noroc!",
+      "Renunță la 3 degete pentru 10 rotiri gratuite la slots!",
+      "Sacrifică 100 credite pentru a primi 500!",
+      "Dăruiește-ți sufletul pentru un jackpot garantat!",
+      "Pierde 1 zi din viață pentru a vedea viitorul unei mâini la blackjack!",
+      "Acceptă o provocare secretă pentru o recompensă misterioasă!"
+    ];
+    let current = Math.floor(Math.random() * challenges.length);
+    function showChallenge() {
+      document.getElementById('devil-challenge').textContent = challenges[current];
+      document.getElementById('devil-result').textContent = '';
+    }
+    function nextChallenge() {
+      current = (current + 1) % challenges.length;
+      showChallenge();
+    }
+    function acceptChallenge() {
+      let fingers = getFingers();
+      let credits = getCredits();
+      let msg = '';
+      // Special handling pentru provocarea Gabriela
+      const gabrielaText = "Gabriela este la 2 KM de tine! Plateste 50 de credite pentru a te intalni cu ea (smirk face)";
+      if (challenges[current] === gabrielaText) {
+        if (credits >= 50) {
+          credits -= 50;
+          localStorage.setItem('credits', credits);
+          msg = "Ai plătit 50 de credite. Gabriela te așteaptă!";
+        } else {
+          msg = "Nu ai suficiente credite pentru a o întâlni pe Gabriela.";
+        }
+      // Pactul cu 10 rotiri gratuite doar dacă acceptă provocarea exactă
+      } else if (challenges[current].startsWith("Primești 10 rotiri gratuite")) {
+        msg = "Ai primit 10 rotiri gratuite la slots! (Efect special: la un moment dat vei fi dezbrăcat 5 secunde în fiecare zi)";
+        localStorage.setItem('freeSpins', '10');
+      } else if (challenges[current].startsWith("Sacrifică-ți 3 degete")) {
+        if (fingers < 3) {
+          msg = "Nu ai suficiente degete pentru această provocare!";
+        } else {
+          fingers -= 3;
+          localStorage.setItem('fingers', fingers);
+          msg = "Ai sacrificat 3 degete! Primești 3 rotiri cu 3x noroc, dar toate vor fi ghinioniste la slots! (Activează efectul special la slots)";
+        }
+      } else if (challenges[current].startsWith("Sacrifică-ți un picior")) {
+        fingers = Math.min(10, fingers + 4);
+        localStorage.setItem('fingers', fingers);
+        msg = "Ai sacrificat un picior! Ți s-au regenerat 4 degete. (Efect: după fiecare mână la blackjack, se regenerează 1 deget până la 4)";
+      } else {
+        msg = "Ai acceptat provocarea! Diavolul îți va acorda recompensa...";
+      }
+      updateInfoCorner();
+      document.getElementById('devil-result').textContent = msg;
+    }
+    // Sincronizare degete și credite reale între camere
+    function getFingers() {
+      return parseInt(localStorage.getItem('fingers') || '10');
+    }
+    function getCredits() {
+      return parseInt(localStorage.getItem('credits') || '10');
+    }
+    function updateInfoCorner() {
+      const fingers = getFingers();
+      const credits = getCredits();
+      document.getElementById('finger-count').textContent = fingers;
+      document.getElementById('finger-emojis').textContent = '☝️'.repeat(fingers);
+      document.getElementById('credit-count').textContent = credits;
+    }
+    updateInfoCorner();
+    showChallenge();
+    // --- Top-up modal markup and behavior ---
+    // inject modal HTML
+    (function(){
+      const modalHtml = `
+        <div id="topup-modal" style="display:none;position:fixed;left:0;top:0;width:100%;height:100%;background:rgba(0,0,0,0.6);z-index:99999;align-items:center;justify-content:center;">
+          <div class="modal-card" style="background:#081018;color:#0ff;padding:18px;border-radius:12px;max-width:460px;margin:20px;position:relative;overflow:hidden;">
+            <div class="fire-scene" aria-hidden="true">
+              <div class="flame f2"></div>
+              <div class="flame f3"></div>
+              <div class="flame f4"></div>
+              <div class="flame f5"></div>
+              <div class="flame f6"></div>
+            </div>
+            <h3 style="margin-top:8px">Camera Diavolului - Top-up</h3>
+            <p style="color:#f88">Intră în flăcări și cumpără-ți norocul. (simulat)</p>
+            <div style="margin:10px 0;display:flex;justify-content:center;gap:10px;flex-wrap:wrap;">
+              <button onclick="topup(5)" style="padding:8px 12px;border-radius:8px;background:#c33;color:#fff;border:none;cursor:pointer;">+5 credite</button>
+              <button onclick="topup(10)" style="padding:8px 12px;border-radius:8px;background:#c33;color:#fff;border:none;cursor:pointer;">+10 credite</button>
+              <button onclick="topup(20)" style="padding:8px 12px;border-radius:8px;background:#c33;color:#fff;border:none;cursor:pointer;">+20 credite</button>
+              <button onclick="topup(50)" style="padding:8px 12px;border-radius:8px;background:#c33;color:#fff;border:none;cursor:pointer;">+50 credite</button>
+              <button onclick="topup(100)" style="padding:8px 12px;border-radius:8px;background:#c33;color:#fff;border:none;cursor:pointer;">+100 credite</button>
+              <button onclick="topup(500)" style="padding:8px 12px;border-radius:8px;background:#c33;color:#fff;border:none;cursor:pointer;">+500 credite</button>
+              <button onclick="topup(1000)" style="padding:8px 12px;border-radius:8px;background:#c33;color:#fff;border:none;cursor:pointer;">+1000 credite</button>
+            </div>
+            <div id="topup-msg" style="margin-top:10px;color:#bfb;text-align:center;"></div>
+            <div style="text-align:center;margin-top:12px;"><button onclick="closeTopupModal()" style="padding:8px 10px;border-radius:8px;background:#444;color:#fff;border:none;cursor:pointer;">Închide</button></div>
+          </div>
+        </div>`;
+      const wrapper = document.createElement('div'); wrapper.innerHTML = modalHtml; document.body.appendChild(wrapper.firstElementChild);
+
+      // functions used by modal
+      window.topup = function(amount){
+        let credits = parseInt(localStorage.getItem('credits') || '0');
+        credits += Number(amount);
+        localStorage.setItem('credits', credits);
+  // Special flavor text for certain amounts
+  let msg = '';
+  const a = Number(amount);
+  if (a === 5) msg = `Ai primit 5 credite — ți-ai vândut papucii.`;
+  else if (a === 20) msg = `Ai primit 20 credite — ți-ai vândut telefonul.`;
+  else if (a === 50) msg = `Ai primit 50 credite — ți-ai vândut ușa de la casă.`;
+  else if (a === 100) msg = `Ai primit 100 credite — ți-ai vândut calul.`;
+  else if (a === 500) msg = `Ai primit 500 credite — ți-ai vândut mașina pe care probabil ai pierdut-o deja.`;
+  else if (a === 1000) msg = `Ai primit 1000 credite — ți-ai vândut sufletul demonului.`;
+  else msg = `Ai primit ${amount} credite.`;
+        if (document.getElementById('topup-msg')) document.getElementById('topup-msg').textContent = msg;
+        if (typeof updateInfoCorner === 'function') { try{ updateInfoCorner(); }catch(e){} }
+      };
+      window.topupCustom = function(){
+        const v = parseInt(document.getElementById('topup-custom').value || '0');
+        if (!v || v < 1) { if (document.getElementById('topup-msg')) document.getElementById('topup-msg').textContent = 'Introdu o sumă validă.'; return; }
+        topup(v);
+      };
+  window.showTopupModal = function(){ const m = document.getElementById('topup-modal'); if (m) { m.style.display = 'flex'; setTimeout(()=>m.classList.add('open'),30); const card = m.querySelector('.modal-card'); if(card) card.classList.add('appear'); } };
+  window.closeTopupModal = function(){ const m = document.getElementById('topup-modal'); if (m) { m.classList.remove('open'); setTimeout(()=>{ m.style.display='none'; }, 360); } };
+
+      // Show the modal on load as requested
+      try{ showTopupModal(); } catch(e){}
+    })();
+  </script>
+</body>
+</html>

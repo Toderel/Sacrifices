@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="utf-8">
+  <title>Adăugare Credite</title>
+  <link rel="stylesheet" href="../style.css">
+  <style>
+    .topup {
+      max-width: 480px;
+      margin: 40px auto;
+      background: #081018;
+      color: #0ff;
+      padding: 28px;
+      border-radius: 12px;
+      text-align: center;
+      box-shadow: 0 0 18px rgba(0,0,0,0.6);
+    }
+    .topup button { margin: 8px; padding: 10px 18px; border-radius:8px; background:#0aa; color:#002; border:none; cursor:pointer }
+    .topup input { padding:8px 12px; border-radius:8px; margin-right:8px }
+    .back { display:inline-block; margin-top:12px; color:#0ff; text-decoration:underline }
+  </style>
+</head>
+<body>
+  <div id="info-corner" style="position:fixed;top:18px;left:18px;z-index:20;background:#222;color:#0fa;padding:12px 18px;border-radius:12px;box-shadow:0 0 12px #000;font-size:17px;max-width:220px;">
+    <div id="finger-display">Degete: <span id="finger-count">5</span> <span id="finger-emojis">☝️☝️☝️☝️☝️</span></div>
+    <div id="credit-display">Credite: <span id="credit-count">1000</span></div>
+  </div>
+
+  <div class="topup">
+    <h1>Adaugă credite</h1>
+    <p>Alege o sumă pentru a-ți reîncărca creditele (simulat)</p>
+    <div style="margin:12px 0">
+      <button onclick="topup(5)">+5 credite</button>
+      <button onclick="topup(10)">+10 credite</button>
+      <button onclick="topup(20)">+20 credite</button>
+      <button onclick="topup(50)">+50 credite</button>
+      <button onclick="topup(100)">+100 credite</button>
+      <button onclick="topup(500)">+500 credite</button>
+      <button onclick="topup(1000)">+1000 credite</button>
+    </div>
+    <div id="topup-msg" style="margin-top:14px;color:#afa"></div>
+    <a class="back" href="camera-diavolului.html">⟵ Înapoi la Camera Diavolului</a>
+  </div>
+
+  <script>
+    function getCredits(){ return parseInt(localStorage.getItem('credits')||'10'); }
+    function setCredits(v){ localStorage.setItem('credits', String(v)); if (typeof updateInfoCorner==='function') try{ updateInfoCorner() }catch(e){} if (document.getElementById('credit-count')) document.getElementById('credit-count').textContent = v; }
+    function topup(amount){
+      let c = getCredits();
+      c += amount;
+      setCredits(c);
+  let msg = '';
+  const a = Number(amount);
+  if (a === 5) msg = `Ai primit 5 credite — ți-ai vândut papucii.`;
+  else if (a === 20) msg = `Ai primit 20 credite — ți-ai vândut telefonul.`;
+  else if (a === 50) msg = `Ai primit 50 credite — ți-ai vândut ușa de la casă.`;
+  else if (a === 100) msg = `Ai primit 100 credite — ți-ai vândut calul.`;
+  else if (a === 500) msg = `Ai primit 500 credite — ți-ai vândut mașina pe care probabil ai văzut-o deja.`;
+  else if (a === 1000) msg = `Ai primit 1000 credite — ți-ai vândut sufletul demonului.`;
+  else msg = `Ai primit ${amount} credite.`;
+      document.getElementById('topup-msg').textContent = msg;
+    }
+    function topupCustom(){
+      const val = parseInt(document.getElementById('custom-amt').value || '0');
+      if (!val || val < 1) { document.getElementById('topup-msg').textContent = 'Introdu o sumă validă.'; return; }
+      topup(val);
+    }
+    // Init info corner
+    (function(){ if (!localStorage.getItem('credits')) localStorage.setItem('credits','10'); if (!localStorage.getItem('fingers')) localStorage.setItem('fingers','10'); if (!localStorage.getItem('freeSpins')) localStorage.setItem('freeSpins','0'); const c=parseInt(localStorage.getItem('credits')); if (document.getElementById('credit-count')) document.getElementById('credit-count').textContent = c; const f=parseInt(localStorage.getItem('fingers')); if (document.getElementById('finger-count')) document.getElementById('finger-count').textContent = f; if (document.getElementById('finger-emojis')) document.getElementById('finger-emojis').textContent = '☝️'.repeat(f); })();
+  </script>
+</body>
+</html>

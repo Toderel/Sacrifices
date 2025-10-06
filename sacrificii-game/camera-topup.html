@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="utf-8">
+  <title>Camera Top-up</title>
+  <link rel="stylesheet" href="../style.css">
+  <style>
+    .room {
+      max-width: 700px;
+      margin: 30px auto;
+      background: #12080a;
+      color: #ffb3b3;
+      padding: 28px;
+      border-radius: 14px;
+      box-shadow: 0 0 30px rgba(150,20,20,0.6);
+      text-align: center;
+    }
+    .fire-scene { position:relative; width:100%; height:90px; overflow:hidden; margin-bottom:10px }
+    .fire-scene .flame { position:absolute; bottom:-8px; width:26px; height:52px; background: radial-gradient(ellipse at 50% 30%, rgba(255,200,0,0.95) 0%, rgba(255,70,0,0.85) 45%, rgba(120,0,0,0.6) 80%); border-radius:50% 50% 40% 40%; transform-origin:50% 90%; animation: flicker 1s infinite; filter: blur(0.8px); }
+    .fire-scene .flame.f2{ left:10%; animation-duration:1.05s; height:64px; width:32px }
+    .fire-scene .flame.f3{ left:26%; animation-duration:1.2s; height:56px; width:28px }
+    .fire-scene .flame.f4{ left:42%; animation-duration:0.9s; height:78px; width:38px }
+    .fire-scene .flame.f5{ left:60%; animation-duration:1.15s; height:58px; width:30px }
+    .fire-scene .flame.f6{ left:78%; animation-duration:1.05s; height:66px; width:34px }
+    @keyframes flicker { 0%{ transform: translateY(6px) scaleY(0.92) } 50%{ transform: translateY(-6px) scaleY(1.12) } 100%{ transform: translateY(6px) scaleY(0.95) } }
+
+    .topup-buttons { display:flex; justify-content:center; gap:10px; flex-wrap:wrap; margin:12px 0 }
+    .topup-buttons button{ padding:10px 18px; border-radius:8px; background:#c33; color:#fff; border:none; cursor:pointer }
+    .back-link { display:inline-block; margin-top:14px; color:#ffb3b3; text-decoration:underline }
+    .info-small { font-size:14px; color:#ffdede; margin-top:12px }
+  </style>
+</head>
+<body>
+  <div id="info-corner" style="position:fixed;top:18px;left:18px;z-index:20;background:#222;color:#0fa;padding:12px 18px;border-radius:12px;box-shadow:0 0 12px #000;font-size:17px;max-width:220px;">
+    <div id="finger-display">Degete: <span id="finger-count">5</span> <span id="finger-emojis">☝️☝️☝️☝️☝️</span></div>
+    <div id="credit-display">Credite: <span id="credit-count">1000</span></div>
+    <!-- Top-up quick access under counters -->
+    <div style="margin-top:8px;text-align:center;"><a href="camera-topup.html" id="topup-link" style="background:#c33;color:#fff;padding:6px 10px;border-radius:8px;text-decoration:none;">Top-up</a></div>
+  </div>
+
+  <div class="room">
+    <div class="fire-scene" aria-hidden="true">
+      <div class="flame f2"></div>
+      <div class="flame f3"></div>
+      <div class="flame f4"></div>
+      <div class="flame f5"></div>
+      <div class="flame f6"></div>
+    </div>
+    <h1>Camera Top-up</h1>
+    <p class="info-small">Intră în flăcări și cumpără noroc. (simulat)</p>
+
+    <div class="topup-buttons">
+      <button onclick="topup(5)">+5 credite</button>
+      <button onclick="topup(10)">+10 credite</button>
+      <button onclick="topup(20)">+20 credite</button>
+      <button onclick="topup(50)">+50 credite</button>
+      <button onclick="topup(100)">+100 credite</button>
+      <button onclick="topup(500)">+500 credite</button>
+      <button onclick="topup(1000)">+1000 credite</button>
+    </div>
+
+    <div id="topup-msg" style="margin-top:12px;color:#bfb"></div>
+
+    <a class="back-link" href="camera-diavolului.html">⟵ Înapoi la Camera Diavolului</a>
+  </div>
+
+  <script>
+    function getCredits(){ return parseInt(localStorage.getItem('credits')||'10'); }
+    function setCredits(v){ localStorage.setItem('credits', String(v)); if (typeof updateInfoCorner==='function') try{ updateInfoCorner() }catch(e){} if (document.getElementById('credit-count')) document.getElementById('credit-count').textContent = v; }
+  function topup(amount){ let c = getCredits(); c += Number(amount); setCredits(c); let msg = ''; const a=Number(amount); if (a===5) msg = `Ai primit 5 credite — ți-ai vândut papucii.`; else if (a===20) msg = `Ai primit 20 credite — ți-ai vândut telefonul.`; else if (a===50) msg = `Ai primit 50 credite — ți-ai vândut ușa de la casă.`; else if (a===100) msg = `Ai primit 100 credite — ți-ai vândut calul.`; else if (a===500) msg = `Ai primit 500 credite — ți-ai vândut mașina pe care probabil ai văzut-o deja.`; else if (a===1000) msg = `Ai primit 1000 credite — ți-ai vândut sufletul demonului.`; else msg = `Ai primit ${amount} credite.`; document.getElementById('topup-msg').textContent = msg; }
+    function topupCustom(){ const val = parseInt(document.getElementById('topup-custom').value||'0'); if (!val||val<1){ document.getElementById('topup-msg').textContent='Introdu o sumă validă.'; return;} topup(val); }
+    (function(){ if (!localStorage.getItem('credits')) localStorage.setItem('credits','10'); if (!localStorage.getItem('fingers')) localStorage.setItem('fingers','10'); if (!localStorage.getItem('freeSpins')) localStorage.setItem('freeSpins','0'); const c=parseInt(localStorage.getItem('credits')); if (document.getElementById('credit-count')) document.getElementById('credit-count').textContent=c; const f=parseInt(localStorage.getItem('fingers')); if (document.getElementById('finger-count')) document.getElementById('finger-count').textContent=f; if (document.getElementById('finger-emojis')) document.getElementById('finger-emojis').textContent='☝️'.repeat(f); })();
+  </script>
+</body>
+</html>
